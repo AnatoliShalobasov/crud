@@ -1,76 +1,64 @@
 package jdbc;
 
-import jdbc.dao.UsersDAO;
 import model.User;
-import org.h2.jdbcx.JdbcDataSource;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 public class DBService {
-    private final Connection connection;
+    public static void main(String[] argv) throws SQLException {
 
-    public DBService() {
-        this.connection = getH2Connection();
-    }
+        System.out.println("-------- MySQL JDBC Connection Testing ------------");
 
-    public User getUser(long id) throws DBException {
         try {
-            return (new UsersDAO(connection).get(id));
-        } catch (SQLException e) {
-            throw new DBException(e);
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Where is your MySQL JDBC Driver?");
+            e.printStackTrace();
+            return;
         }
-    }
 
-    public long addUser(String name) throws DBException {
+        System.out.println("MySQL JDBC Driver Registered!");
+        Connection connection = null;
+
         try {
-            connection.setAutoCommit(false);
-            UsersDAO dao = new UsersDAO(connection);
-            dao.createTable();
-            dao.insertUser(name);
-            connection.commit();
-            return dao.getUserId(name);
+            connection = DriverManager
+                    .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
+
         } catch (SQLException e) {
-            try {
-                connection.rollback();
-            } catch (SQLException ignore) {
-            }
-            throw new DBException(e);
-        } finally {
-            try {
-                connection.setAutoCommit(true);
-            } catch (SQLException ignore) {
-            }
+            System.out.println("Connection Failed! Check output console");
+            e.printStackTrace();
+            return;
         }
-    }
 
-    public void cleanUp() throws DBException {
-        UsersDAO dao = new UsersDAO(connection);
-        try {
-            dao.dropTable();
-        } catch (SQLException e) {
-            throw new DBException(e);
+        if (connection != null) {
+            System.out.println("You made it, take control your database now!");
+        } else {
+            System.out.println("Failed to make connection!");
         }
-    }
-
-
-    public static Connection getH2Connection() {
+        Statement stmt = null;
         try {
-            String url = "jdbc:h2:./h2db";
-            String name = "users";
-            String pass = "12345";
-
-            JdbcDataSource ds = new JdbcDataSource();
-            ds.setURL(url);
-            ds.setUser(name);
-            ds.setPassword(pass);
-
-            Connection connection = DriverManager.getConnection(url, name, pass);
-            return connection;
+            stmt = connection.createStatement();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null;
+        stmt.execute("CREATE TABLE if NOT EXISTS users (id bigint auto_increment , user_name VARCHAR (50) NOT NULL, user_login VARCHAR (50) NOT NULL, user_password VARCHAR (50) NOT NULL, PRIMARY KEY (id))");
+        System.out.println("TABLE CREATE");
+        stmt.execute("INSERT INTO users (user_name, user_login, user_password) VALUES ('PASHA', 'pasha', '123pasha')");
+        stmt.execute("insert into users (user_name, user_login, user_password) values ('KOLIA', 'kolia', '123kolia')");
+        stmt.execute("insert into users (user_name, user_login, user_password) values ('ALBERT', 'albert', '123albert')");
+        stmt.execute("DELETE FROM users WHERE user_name = 'KOLIA'");
+        stmt.execute("UPDATE users SET user_login = 'PAPA',user_password = '55555' WHERE user_name = 'PASHA'");
+        ResultSet set=stmt.executeQuery("SELECT * FROM users");
+        while (set.next()){
+            String name = set.getString("user_name");
+            System.out.print(name + " name ");
+            String login = set.getString("user_login");
+            System.out.print(" " + login + " login ");
+            String password = set.getString("user_password");
+            System.out.print(" "  + password+ " password ");
+            System.out.println();
+        }
+        //stmt.execute("drop table users");
+        stmt.close();
     }
 }

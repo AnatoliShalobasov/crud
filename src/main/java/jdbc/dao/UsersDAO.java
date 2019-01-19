@@ -4,6 +4,7 @@ import model.User;
 import jdbc.executor.Executor;
 
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 
@@ -15,29 +16,22 @@ public class UsersDAO {
         this.executor = new Executor(connection);
     }
 
-    public User get(long id) throws SQLException {
-        return executor.execQuery("select * from users where id=" + id, result -> {
-            result.next();
-            return new User(result.getLong(1), result.getString(2));
-        });
+    public void updateUser(String name, String login, String password) throws SQLException {
+        executor.execUpdate("UPDATE users SET user_login = '" + login + "',user_password = '" + password + "' WHERE users_name = '" + name + "'");
+    }
+    public void deleteUser(String name) throws SQLException {
+        executor.execUpdate("DELETE FROM users WHERE user_name = '" + name + "'");
     }
 
-    public long getUserId(String name) throws SQLException {
-        return executor.execQuery("select * from users where user_name='" + name + "'", result -> {
-            result.next();
-            return result.getLong(1);
-        });
-    }
-
-    public void insertUser(String name) throws SQLException {
-        executor.execUpdate("insert into users (user_name, login, password) values ('" + name + "')");
+    public void insertUser(String name, String login, String password) throws SQLException {
+        executor.execUpdate("INSERT INTO users (user_name, user_login, user_password) VALUES ('" + name + "', '" + login + "', '" + password + "')");
     }
 
     public void createTable() throws SQLException {
-        executor.execUpdate("create table if not exists users (id bigint auto_increment, user_name varchar(256), user_login varchar(256), user_password varchar(256), primary key (id))");
+        executor.execUpdate("CREATE TABLE IF NOT EXISTS users (id BIGINT AUTO_INCREMENT NOT NULL, user_name VARCHAR(50) NOT NULL, user_login VARCHAR(50) NOT NULL, user_password VARCHAR(50) NOT NULL, PRIMARY KEY (id))");
     }
 
     public void dropTable() throws SQLException {
-        executor.execUpdate("drop table users");
+        executor.execUpdate("DROP TABLE users");
     }
 }

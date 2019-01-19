@@ -19,16 +19,13 @@ public class Executor {
     }
 
     public <T> T execQuery(String query,
-                           ResultHandler<T> handler)
-            throws SQLException {
+                           ResultHandler<T> handler) throws SQLException {
         Statement stmt = connection.createStatement();
         stmt.execute(query);
         ResultSet result = stmt.getResultSet();
         T value = handler.handle(result);
         result.close();
         stmt.close();
-
         return value;
     }
-
 }
