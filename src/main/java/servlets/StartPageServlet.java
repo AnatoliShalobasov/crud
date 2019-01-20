@@ -17,7 +17,7 @@ public class StartPageServlet extends HttpServlet {
     List<User> listUsers;
 
     @Override
-    public void init() throws ServletException {
+    public void init() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
@@ -25,40 +25,25 @@ public class StartPageServlet extends HttpServlet {
             e.printStackTrace();
             return;
         }
-        Connection connection;
-        try {
-            connection = DriverManager
-                    .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
-
-        } catch (SQLException e) {
-            System.out.println("STARTPAGE***Connection Failed! Check output console***STARTPAGE");
-            e.printStackTrace();
-            return;
-        }
-
-        Statement stmt = null;
-        try {
-            stmt = connection.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        listUsers = new CopyOnWriteArrayList<>();
-        try {
-            ResultSet set = stmt.executeQuery("SELECT * FROM users");
-            while (set.next()) {
-                listUsers.add(new User(set.getInt("id"),
-                        set.getString("user_name"),
-                        set.getString("user_login"),
-                        set.getString("user_password")));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        try (Connection con = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
+             Statement statement = con.createStatement();
+             ResultSet resultSet = statement.executeQuery("SELECT * FROM users")
+        ) {
+            listUsers = new CopyOnWriteArrayList<>();
+            while (resultSet.next()) {
+                listUsers.add(new User(resultSet.getInt("id"),
+                        resultSet.getString("user_name"),
+                        resultSet.getString("user_login"),
+                        resultSet.getString("user_password")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         req.setAttribute("users", listUsers);
         req.getRequestDispatcher("/WEB-INF/index.jsp").forward(req, resp);
     }
