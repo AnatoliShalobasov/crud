@@ -23,7 +23,6 @@ public class AddUserServlet extends HttpServlet {
                 .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
         ) {
             dbService.setConnection(con);
-            dbService.createTable();
             dbService.insertUser(name, login, password);
         } catch (SQLException e) {
             e.printStackTrace();
