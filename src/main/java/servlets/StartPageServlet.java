@@ -1,5 +1,6 @@
 package servlets;
 
+import jdbc.DBService;
 import model.User;
 
 import javax.servlet.ServletException;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -17,30 +19,13 @@ public class StartPageServlet extends HttpServlet {
     List<User> listUsers;
 
     @Override
-    public void init() {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            System.out.println("STARTPAGE***Where is your MySQL JDBC Driver?***STARTPAGE");
-            e.printStackTrace();
-            return;
-        }
-    }
-
-    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try (Connection con = DriverManager
+        try (Connection connection = DriverManager
                 .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
-             Statement statement = con.createStatement();
-             ResultSet resultSet = statement.executeQuery("SELECT * FROM users")
         ) {
-            listUsers = new CopyOnWriteArrayList<>();
-            while (resultSet.next()) {
-                listUsers.add(new User(resultSet.getInt("id"),
-                        resultSet.getString("user_name"),
-                        resultSet.getString("user_login"),
-                        resultSet.getString("user_password")));
-            }
+            DBService dbService = DBService.getInstance(connection);
+            dbService.createTable();
+            listUsers = dbService.getAllUsers();
         } catch (SQLException e) {
             e.printStackTrace();
         }

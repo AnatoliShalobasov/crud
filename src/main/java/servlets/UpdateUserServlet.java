@@ -1,5 +1,6 @@
 package servlets;
 
+import jdbc.DBService;
 import model.User;
 
 import javax.servlet.ServletException;
@@ -13,22 +14,14 @@ import java.sql.*;
 @WebServlet("/update")
 public class UpdateUserServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        final String id = req.getParameter("id");
-        try (Connection con = DriverManager
-                .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
-             Statement statement = con.createStatement();
-             ResultSet userResultSet = statement.executeQuery("SELECT * FROM users WHERE id = '" + Integer.valueOf(id) + "'")) {
-            User user = null;
-            while (userResultSet.next()) {
-                user = new User(userResultSet.getInt("id"),
-                        userResultSet.getString("user_name"),
-                        userResultSet.getString("user_login"),
-                        userResultSet.getString("user_password"));
-            }
-            req.setAttribute("user", user);
-            req.getRequestDispatcher("/WEB-INF/update.jsp")
-                    .forward(req, resp);
+    protected void doGet(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
+        final String id = request.getParameter("id");
+        try (Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root")) {
+            DBService dbService = DBService.getInstance(connection);
+            request.setAttribute("user",dbService.getUser(id));
+            request.getRequestDispatcher("/WEB-INF/update.jsp")
+                    .forward(request, resp);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -36,21 +29,21 @@ public class UpdateUserServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
 
-        final String id = req.getParameter("id");
-        final String login = req.getParameter("login");
-        final String password = req.getParameter("password");
+        final String id = request.getParameter("id");
+        final String login = request.getParameter("login");
+        final String password = request.getParameter("password");
 
-        try (Connection con = DriverManager
-                .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
-             Statement statement = con.createStatement()) {
-            statement.execute("UPDATE users SET user_login = '" + login + "',user_password = '" + password + "' WHERE id = '" + Integer.valueOf(id) + "'");
-        } catch (SQLException e) {
-            e.printStackTrace();
+        try (Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root")) {
+            DBService dbService = DBService.getInstance(connection);
+            dbService.updateUser(id,login,password);
+        } catch (SQLException e1) {
+            e1.printStackTrace();
         }
 
-        resp.sendRedirect(req.getContextPath() + "/");
+        response.sendRedirect(request.getContextPath() + "/");
     }
 }

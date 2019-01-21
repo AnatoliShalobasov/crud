@@ -1,5 +1,6 @@
 package servlets;
 
+import jdbc.DBService;
 import model.User;
 
 import javax.servlet.ServletException;
@@ -21,8 +22,10 @@ public class AddUserServlet extends HttpServlet {
 
         try (Connection con = DriverManager
                 .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
-             Statement statement = con.createStatement()) {
-            statement.execute("INSERT INTO users (user_name, user_login, user_password) VALUES ('" + name + "', '" + login + "', '" + password + "')");
+        ) {
+            DBService dbService = DBService.getInstance(con);
+            dbService.createTable();
+            dbService.insertUser(name, login, password);
         } catch (SQLException e) {
             e.printStackTrace();
         }

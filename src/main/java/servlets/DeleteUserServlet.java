@@ -1,5 +1,7 @@
 package servlets;
 
+import jdbc.DBService;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -9,7 +11,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 @WebServlet("/delete")
 public class DeleteUserServlet extends HttpServlet {
@@ -18,10 +19,10 @@ public class DeleteUserServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8");
 
         final String id = req.getParameter("id");
-        try (Connection con = DriverManager
-                .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
-             Statement statement = con.createStatement()) {
-            statement.execute("DELETE FROM users WHERE id = '" + Integer.valueOf(id) + "'");
+        try (Connection connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root")) {
+            DBService dbService = DBService.getInstance(connection);
+            dbService.deleteUser(id);
         } catch (SQLException e) {
             e.printStackTrace();
         }
