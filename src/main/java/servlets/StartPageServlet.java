@@ -10,9 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @WebServlet("/")
 public class StartPageServlet extends HttpServlet {
@@ -20,10 +18,11 @@ public class StartPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        DBService dbService = DBService.getInstance();
         try (Connection connection = DriverManager
                 .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
         ) {
-            DBService dbService = DBService.getInstance(connection);
+            dbService.setConnection(connection);
             dbService.createTable();
             listUsers = dbService.getAllUsers();
         } catch (SQLException e) {

@@ -10,7 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class UsersDAO {
-
     Connection connection;
 
     public UsersDAO(Connection connection) {

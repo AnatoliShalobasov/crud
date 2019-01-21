@@ -10,8 +10,7 @@ public class DBService {
     private static DBService instance;
     private UsersDAO usersDAO;
 
-    private DBService() {}
-    private DBService(Connection connection) {
+    private DBService() {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
@@ -19,12 +18,11 @@ public class DBService {
             e.printStackTrace();
             return;
         }
-        usersDAO = new UsersDAO(connection);
     }
 
-    public static DBService getInstance(Connection connection) {
+    public static DBService getInstance() {
         if (instance == null) {
-            instance = new DBService(connection);
+            instance = new DBService();
         }
         return instance;
     }
@@ -51,5 +49,8 @@ public class DBService {
 
     public void createTable() throws SQLException {
         usersDAO.createTable();
+    }
+    public void setConnection(Connection connection){
+        usersDAO = new UsersDAO(connection);
     }
 }

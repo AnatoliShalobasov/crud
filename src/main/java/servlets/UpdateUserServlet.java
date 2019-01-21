@@ -16,16 +16,16 @@ public class UpdateUserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse resp) throws ServletException, IOException {
         final String id = request.getParameter("id");
+        DBService dbService = DBService.getInstance();
         try (Connection connection = DriverManager
                 .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root")) {
-            DBService dbService = DBService.getInstance(connection);
-            request.setAttribute("user",dbService.getUser(id));
+            dbService.setConnection(connection);
+            request.setAttribute("user", dbService.getUser(id));
             request.getRequestDispatcher("/WEB-INF/update.jsp")
                     .forward(request, resp);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
@@ -35,11 +35,12 @@ public class UpdateUserServlet extends HttpServlet {
         final String id = request.getParameter("id");
         final String login = request.getParameter("login");
         final String password = request.getParameter("password");
+        DBService dbService = DBService.getInstance();
 
         try (Connection connection = DriverManager
                 .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root")) {
-            DBService dbService = DBService.getInstance(connection);
-            dbService.updateUser(id,login,password);
+            dbService.setConnection(connection);
+            dbService.updateUser(id, login, password);
         } catch (SQLException e1) {
             e1.printStackTrace();
         }

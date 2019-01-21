@@ -1,7 +1,6 @@
 package servlets;
 
 import jdbc.DBService;
-import model.User;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -19,11 +18,11 @@ public class AddUserServlet extends HttpServlet {
         final String name = req.getParameter("name");
         final String login = req.getParameter("login");
         final String password = req.getParameter("password");
-
+        DBService dbService = DBService.getInstance();
         try (Connection con = DriverManager
                 .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
         ) {
-            DBService dbService = DBService.getInstance(con);
+            dbService.setConnection(con);
             dbService.createTable();
             dbService.insertUser(name, login, password);
         } catch (SQLException e) {
