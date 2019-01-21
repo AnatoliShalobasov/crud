@@ -18,16 +18,19 @@ public class StartPageServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        DBService dbService = DBService.getInstance();
-        try (Connection connection = DriverManager
-                .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
-        ) {
-            dbService.setConnection(connection);
-            dbService.createTable();
-            listUsers = dbService.getAllUsers();
+        DBService dbService = null;
+        try {
+            dbService = DBService.getInstance();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        try {
+            dbService.createTable();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        listUsers = dbService.getAllUsers();
         req.setAttribute("users", listUsers);
         req.getRequestDispatcher("/WEB-INF/index.jsp").forward(req, resp);
     }

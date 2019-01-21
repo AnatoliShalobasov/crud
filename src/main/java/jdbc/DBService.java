@@ -10,19 +10,21 @@ public class DBService {
     private static DBService instance;
     private UsersDAO usersDAO;
 
-    private DBService() {
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-        } catch (ClassNotFoundException e) {
-            System.out.println("Where is your MySQL JDBC Driver?");
-            e.printStackTrace();
-            return;
-        }
+    private DBService(Connection connection) {
+        usersDAO = new UsersDAO(connection);
     }
 
-    public static DBService getInstance() {
+    public static DBService getInstance() throws SQLException {
         if (instance == null) {
-            instance = new DBService();
+            try {
+                Class.forName("com.mysql.cj.jdbc.Driver");
+            } catch (ClassNotFoundException e) {
+                System.out.println("Where is your MySQL JDBC Driver?");
+                e.printStackTrace();
+            }
+            Connection connection = DriverManager
+                    .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
+            instance = new DBService(connection);
         }
         return instance;
     }
@@ -49,8 +51,5 @@ public class DBService {
 
     public void createTable() throws SQLException {
         usersDAO.createTable();
-    }
-    public void setConnection(Connection connection){
-        usersDAO = new UsersDAO(connection);
     }
 }

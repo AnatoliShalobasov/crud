@@ -18,11 +18,13 @@ public class AddUserServlet extends HttpServlet {
         final String name = req.getParameter("name");
         final String login = req.getParameter("login");
         final String password = req.getParameter("password");
-        DBService dbService = DBService.getInstance();
-        try (Connection con = DriverManager
-                .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
-        ) {
-            dbService.setConnection(con);
+        DBService dbService = null;
+        try {
+            dbService = DBService.getInstance();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
             dbService.insertUser(name, login, password);
         } catch (SQLException e) {
             e.printStackTrace();

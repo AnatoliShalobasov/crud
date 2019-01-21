@@ -17,11 +17,15 @@ public class DeleteUserServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setCharacterEncoding("UTF-8");
-        DBService dbService = DBService.getInstance();
+        DBService dbService = null;
+        try {
+            dbService = DBService.getInstance();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         final String id = req.getParameter("id");
-        try (Connection connection = DriverManager
-                .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root")) {
-            dbService.setConnection(connection);
+
+        try {
             dbService.deleteUser(id);
         } catch (SQLException e) {
             e.printStackTrace();
