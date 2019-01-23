@@ -1,6 +1,6 @@
-package servlets;
+package servlet;
 
-import jdbc.DBService;
+import service.UserService;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.sql.*;
 
 @WebServlet("/add")
 public class AddUserServlet extends HttpServlet {
@@ -18,17 +17,9 @@ public class AddUserServlet extends HttpServlet {
         final String name = req.getParameter("name");
         final String login = req.getParameter("login");
         final String password = req.getParameter("password");
-        DBService dbService = null;
-        try {
-            dbService = DBService.getInstance();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
-            dbService.insertUser(name, login, password);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        resp.sendRedirect(req.getContextPath() + "/");
+
+        UserService userService = UserService.getInstance();
+        userService.insertUser(name, login, password);
+        resp.sendRedirect("/");
     }
 }
