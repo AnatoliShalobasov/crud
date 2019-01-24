@@ -6,12 +6,12 @@ import java.sql.Connection;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 public class UsersDAO {
-    Connection connection;
-    ExecutorService ExecutorService;
+    private Connection connection;
+    private ExecutorService ExecutorService;
+    private ResultHandler<User> resultHandler;
 
     public UsersDAO() {
         try {
@@ -20,14 +20,14 @@ public class UsersDAO {
             e.printStackTrace();
         }
         this.ExecutorService = new ExecutorService(connection);
-
+        this.resultHandler = new Result();
     }
 
     public ArrayList<User> getAll() throws DBException {
         String selectAllQuery = "SELECT * FROM users";
-        ArrayList<User> users = new ArrayList<>();
+        ArrayList<User> users;
         try {
-            users = ExecutorService.get(selectAllQuery);
+            users = ExecutorService.get(selectAllQuery, resultHandler);
         } catch (SQLException e) {
             throw new DBException(e);
         }
@@ -61,7 +61,7 @@ public class UsersDAO {
         String getQuery = "SELECT * FROM users WHERE id = '" + Integer.valueOf(id) + "'";
         User user = null;
         try {
-            user = ExecutorService.get(getQuery).get(0);
+            user = ExecutorService.get(getQuery, resultHandler).get(0);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new DBException(e);
@@ -99,38 +99,20 @@ public class UsersDAO {
         try {
             ExecutorService.execUpdate(dropQuery);
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new DBException(e);
         }
     }
 
-    private static class ExecutorService {
-        private final Connection connection;
-
-        public ExecutorService(Connection connection) {
-            this.connection = connection;
-        }
-
-        public void execUpdate(String update) throws SQLException {
-            Statement stmt = connection.createStatement();
-            stmt.execute(update);
-            stmt.close();
-        }
-
-        public ArrayList<User> get(String query) throws SQLException {
-            Statement stmt = connection.createStatement();
-            stmt.execute(query);
+    private static class Result implements ResultHandler<User> {
+        @Override
+        public ArrayList<User> handle(ResultSet result) throws SQLException {
             ArrayList<User> users = new ArrayList<>();
-            ResultSet result = stmt.getResultSet();
             while (result.next()) {
                 users.add(new User(result.getInt("id"),
                         result.getString("user_name"),
                         result.getString("user_login"),
                         result.getString("user_password")));
             }
-
-            result.close();
-            stmt.close();
             return users;
         }
     }

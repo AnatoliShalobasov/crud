@@ -7,18 +7,24 @@
 <body>
 
 <h2>Все пользователи</h2><br/>
-    <table border="1">
-        <tr><th>Имя </th><th>Логин</th><th>Пароль</th><th>Удалить</th><th>Редактировать</th></tr>
-        <c:forEach var="user" items="${requestScope.users}">
+<table border="1">
+    <tr>
+        <th>Имя</th>
+        <th>Логин</th>
+        <th>Пароль</th>
+        <th>Удалить</th>
+        <th>Редактировать</th>
+    </tr>
+    <c:forEach var="user" items="${requestScope.users}">
         <tr>
             <td><c:out value="${user.getName()}"/></td>
             <td><c:out value="${user.getLogin()}"/></td>
             <td><c:out value="${user.getPassword()}"/></td>
             <td>
-            <form method="post" action="<c:url value='/delete'/>">
-                <input type="number" hidden name="id" value="${user.getId()}"/>
-                <input type="submit" name="delete" value="Удалить"/>
-            </form>
+                <form method="post" action="<c:url value='/delete'/>">
+                    <input type="number" hidden name="id" value="${user.getId()}"/>
+                    <input type="submit" name="delete" value="Удалить"/>
+                </form>
             </td>
             <td>
                 <form method="get" action="<c:url value='/update'/>">
@@ -27,17 +33,17 @@
                 </form>
             </td>
         </tr>
-        </c:forEach>
-    </table>
+    </c:forEach>
+    <form method="post" action="<c:url value='/add'/>">
+        <tr>
+            <td>Создание нового пользователь</td>
+            <td><label><input type="text" name="name"></label>Имя</td>
+            <td><label><input type="text" name="login"></label>Логин</td>
+            <td><label><input type="text" name="password"></label>Пароль</td>
+            <td><input type="submit" value="Ok" name="Ok"></td>
+        </tr>
+    </form>
 
-
-<h3>Создание нового пользователя</h3><br/>
-<form method="post" action="<c:url value='/add'/>">
-
-    <label><input type="text" name="name"></label>Имя<br>
-    <label><input type="text" name="login"></label>Логин<br>
-    <label><input type="text" name="password"></label>Пароль<br>
-    <input type="submit" value="Ok" name="Ok"><br>
-</form>
+</table>
 </body>
 </html>
