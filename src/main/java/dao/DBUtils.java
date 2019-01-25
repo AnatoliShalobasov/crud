@@ -10,7 +10,6 @@ public class DBUtils {
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException e) {
-            System.out.println("Where is your MySQL JDBC Driver?");
             e.printStackTrace();
         }
         connection = DriverManager

@@ -42,7 +42,6 @@ public class UsersDAO {
         try {
             ExecutorService.execUpdate(updateQuery);
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new DBException(e);
         }
     }
@@ -52,7 +51,6 @@ public class UsersDAO {
         try {
             ExecutorService.execUpdate(deleteQuery);
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new DBException(e);
         }
     }
@@ -63,7 +61,6 @@ public class UsersDAO {
         try {
             user = ExecutorService.get(getQuery, resultHandler).get(0);
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new DBException(e);
         }
         return user;
@@ -75,7 +72,7 @@ public class UsersDAO {
         try {
             ExecutorService.execUpdate(insertQuery);
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new DBException(e);
         }
     }
 
@@ -89,7 +86,6 @@ public class UsersDAO {
         try {
             ExecutorService.execUpdate(createQuery);
         } catch (SQLException e) {
-            e.printStackTrace();
             throw new DBException(e);
         }
     }
