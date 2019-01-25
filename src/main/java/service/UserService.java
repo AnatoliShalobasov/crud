@@ -1,17 +1,18 @@
 package service;
 
 import dao.DBException;
-import dao.UsersDAO;
+import dao.UsersHibernate;
 import model.User;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UserService {
     private static UserService instance;
-    private UsersDAO usersDAO;
+    private UsersHibernate usersDAO;
 
     public UserService() {
-        usersDAO = new UsersDAO();
+        usersDAO = new UsersHibernate();
     }
 
     public static UserService getInstance() {
@@ -55,7 +56,7 @@ public class UserService {
         }
     }
 
-    public ArrayList<User> getAllUsers() {
+    public List<User> getAllUsers() {
         ArrayList<User> users = new ArrayList<>();
         try {
             return usersDAO.getAll();

@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class UsersDAO {
     private Connection connection;
@@ -23,11 +24,11 @@ public class UsersDAO {
         this.resultHandler = new Result();
     }
 
-    public ArrayList<User> getAll() throws DBException {
+    public List<User> getAll() throws DBException {
         String selectAllQuery = "SELECT * FROM users";
         ArrayList<User> users;
         try {
-            users = ExecutorService.get(selectAllQuery, resultHandler);
+            users = (ArrayList<User>) ExecutorService.get(selectAllQuery, resultHandler);
         } catch (SQLException e) {
             throw new DBException(e);
         }
@@ -57,7 +58,7 @@ public class UsersDAO {
 
     public User getUser(String id) throws DBException {
         String getQuery = "SELECT * FROM users WHERE id = '" + Integer.valueOf(id) + "'";
-        User user = null;
+        User user;
         try {
             user = ExecutorService.get(getQuery, resultHandler).get(0);
         } catch (SQLException e) {
@@ -85,15 +86,6 @@ public class UsersDAO {
                 " PRIMARY KEY (id))";
         try {
             ExecutorService.execUpdate(createQuery);
-        } catch (SQLException e) {
-            throw new DBException(e);
-        }
-    }
-
-    public void dropTable() throws DBException {
-        String dropQuery = "DROP TABLE users";
-        try {
-            ExecutorService.execUpdate(dropQuery);
         } catch (SQLException e) {
             throw new DBException(e);
         }
