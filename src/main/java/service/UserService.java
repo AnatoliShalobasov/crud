@@ -1,7 +1,8 @@
 package service;
 
 import dao.DBException;
-import dao.UsersHibernate;
+import dao.impl.UsersDAO;
+import dao.impl.UsersHibernate;
 import model.User;
 
 import java.util.ArrayList;
@@ -9,10 +10,15 @@ import java.util.List;
 
 public class UserService {
     private static UserService instance;
-    private UsersHibernate usersDAO;
+    private UsersDAO usersDAO;
 
     public UserService() {
-        usersDAO = new UsersHibernate();
+        usersDAO = new UsersDAO();
+        try {
+            usersDAO.createTable();
+        } catch (DBException e) {
+            e.printStackTrace();
+        }
     }
 
     public static UserService getInstance() {
@@ -64,13 +70,5 @@ public class UserService {
             e.printStackTrace();
         }
         return users;
-    }
-
-    public void createTable() {
-        try {
-            usersDAO.createTable();
-        } catch (DBException e) {
-            e.printStackTrace();
-        }
     }
 }

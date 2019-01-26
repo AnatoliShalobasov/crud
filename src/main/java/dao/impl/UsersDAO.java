@@ -1,15 +1,19 @@
-package dao;
+package dao.impl;
 
+import dao.DAO;
+import dao.DBException;
+import utils.DBUtils;
+import executor.ExecutorService;
+import executor.ResultHandler;
 import model.User;
 
 import java.sql.Connection;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsersDAO {
+public class UsersDAO implements DAO {
     private Connection connection;
     private ExecutorService ExecutorService;
     private ResultHandler<User> resultHandler;

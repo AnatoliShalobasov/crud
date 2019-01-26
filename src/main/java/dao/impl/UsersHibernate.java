@@ -1,5 +1,8 @@
-package dao;
+package dao.impl;
 
+import dao.DAO;
+import dao.DBException;
+import utils.UtilsHibernate;
 import model.User;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -7,7 +10,7 @@ import org.hibernate.query.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsersHibernate {
+public class UsersHibernate implements DAO {
     private Session session;
 
     public UsersHibernate() {
