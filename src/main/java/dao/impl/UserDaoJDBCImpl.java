@@ -1,8 +1,8 @@
 package dao.impl;
 
-import dao.DAO;
 import dao.DBException;
-import utils.DBUtils;
+import dao.UserDAO;
+import utils.DBHelper;
 import executor.ExecutorService;
 import executor.ResultHandler;
 import model.User;
@@ -13,14 +13,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsersDAO implements DAO {
+public class UserDaoJDBCImpl implements UserDAO {
     private Connection connection;
     private ExecutorService ExecutorService;
     private ResultHandler<User> resultHandler;
 
-    public UsersDAO() {
+    public UserDaoJDBCImpl() {
         try {
-            this.connection = DBUtils.getConnection();
+            this.connection = DBHelper.getInstance().getConnection();
         } catch (SQLException e) {
             e.printStackTrace();
         }

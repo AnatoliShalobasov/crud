@@ -4,7 +4,7 @@ import model.User;
 
 import java.util.List;
 
-public interface DAO {
+public interface UserDAO {
     List<User> getAll() throws DBException;
 
     void updateUser(String id, String login, String password) throws DBException;

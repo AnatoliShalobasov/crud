@@ -1,8 +1,12 @@
 package dao.impl;
 
-import dao.DAO;
 import dao.DBException;
-import utils.UtilsHibernate;
+import dao.UserDAO;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
+import utils.DBHelper;
 import model.User;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -10,11 +14,12 @@ import org.hibernate.query.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UsersHibernate implements DAO {
+public class UserDaoHibernateImpl implements UserDAO {
+    private Configuration configuration = DBHelper.getInstance().getConfiguration();
     private Session session;
 
-    public UsersHibernate() {
-        this.session = UtilsHibernate.getConnection();
+    public UserDaoHibernateImpl() {
+        this.session = createSessionFactory(configuration).openSession();
     }
 
     public List<User> getAll() throws DBException {
@@ -54,5 +59,12 @@ public class UsersHibernate implements DAO {
     }
 
     public void createTable() throws DBException {
+    }
+
+    private SessionFactory createSessionFactory(Configuration configuration) {
+        StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder();
+        builder.applySettings(configuration.getProperties());
+        ServiceRegistry serviceRegistry = builder.build();
+        return configuration.buildSessionFactory(serviceRegistry);
     }
 }

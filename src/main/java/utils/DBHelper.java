@@ -7,10 +7,45 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
-public class UtilsHibernate {
-    public static Session getConnection() {
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DBHelper {
+    private static DBHelper instance;
+
+    private DBHelper() {
+    }
+
+    private Configuration configuration;
+
+    public static DBHelper getInstance() {
+        if (instance == null) {
+            return instance = new DBHelper();
+        }
+        return instance;
+    }
+
+    public Connection getConnection() throws SQLException {
+        Connection connection;
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        connection = DriverManager
+                .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
+        return connection;
+    }
+
+    public Session getSession() {
         SessionFactory sessionFactory = createSessionFactory(getMySqlConfiguration());
         return sessionFactory.openSession();
+    }
+
+    public Configuration getConfiguration() {
+        configuration = DBHelper.getMySqlConfiguration();
+        return configuration;
     }
 
     private static Configuration getMySqlConfiguration() {

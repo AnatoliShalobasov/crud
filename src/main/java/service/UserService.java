@@ -1,8 +1,8 @@
 package service;
 
 import dao.DBException;
-import dao.impl.UsersDAO;
-import dao.impl.UsersHibernate;
+import dao.UserDAO;
+import dao.UserDaoFactory;
 import model.User;
 
 import java.util.ArrayList;
@@ -10,10 +10,10 @@ import java.util.List;
 
 public class UserService {
     private static UserService instance;
-    private UsersDAO usersDAO;
+    private UserDAO usersDAO;
 
     public UserService() {
-        usersDAO = new UsersDAO();
+        usersDAO = UserDaoFactory.createUserDAO();
         try {
             usersDAO.createTable();
         } catch (DBException e) {
