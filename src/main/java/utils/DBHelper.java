@@ -29,12 +29,14 @@ public class DBHelper {
     public Connection getConnection() throws SQLException {
         Connection connection;
         try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
+            Class.forName(UtilProperty.getPropertyValue("JDBC_DRIVER"));
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
         connection = DriverManager
-                .getConnection("jdbc:mysql://localhost:3306/root?serverTimezone=UTC", "root", "root");
+                .getConnection(UtilProperty.getPropertyValue("BASE"),
+                        UtilProperty.getPropertyValue("BASE_USER"),
+                        UtilProperty.getPropertyValue("BASE_PASSWORD"));
         return connection;
     }
 
@@ -51,13 +53,13 @@ public class DBHelper {
     private static Configuration getMySqlConfiguration() {
         Configuration configuration = new Configuration();
         configuration.addAnnotatedClass(User.class);
-        configuration.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
-        configuration.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
-        configuration.setProperty("hibernate.connection.url", "jdbc:mysql://localhost:3306/root?serverTimezone=UTC");
-        configuration.setProperty("hibernate.connection.username", "root");
-        configuration.setProperty("hibernate.connection.password", "root");
-        configuration.setProperty("hibernate.show_sql", "true");
-        configuration.setProperty("hibernate.hbm2ddl.auto", "update");
+        configuration.setProperty("hibernate.dialect", UtilProperty.getPropertyValue("DIALECT"));
+        configuration.setProperty("hibernate.connection.driver_class", UtilProperty.getPropertyValue("JDBC_DRIVER_HIBERNATE"));
+        configuration.setProperty("hibernate.connection.url", UtilProperty.getPropertyValue("BASE"));
+        configuration.setProperty("hibernate.connection.username", UtilProperty.getPropertyValue("BASE_USER"));
+        configuration.setProperty("hibernate.connection.password", UtilProperty.getPropertyValue("BASE_PASSWORD"));
+        configuration.setProperty("hibernate.show_sql", UtilProperty.getPropertyValue("SHOW_SQL"));
+        configuration.setProperty("hibernate.hbm2ddl.auto", UtilProperty.getPropertyValue("hbm2ddl_auto"));
         return configuration;
     }
 

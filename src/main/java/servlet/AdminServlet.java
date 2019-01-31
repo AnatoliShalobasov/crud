@@ -11,8 +11,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet("/")
-public class StartPageServlet extends HttpServlet {
+@WebServlet("/admin/users")
+public class AdminServlet extends HttpServlet {
     List<User> listUsers;
 
     @Override
@@ -20,6 +20,6 @@ public class StartPageServlet extends HttpServlet {
         UserService userService = UserService.getInstance();
         listUsers = userService.getAllUsers();
         req.setAttribute("users", listUsers);
-        req.getRequestDispatcher("/WEB-INF/index.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/admin_menu.jsp").forward(req, resp);
     }
 }

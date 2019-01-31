@@ -17,7 +17,6 @@ public class DeleteUserServlet extends HttpServlet {
         final String id = req.getParameter("id");
         UserService userService= UserService.getInstance();
         userService.deleteUser(id);
-
-        resp.sendRedirect( "/");
+        resp.sendRedirect( "/admin/users");
     }
 }

@@ -30,11 +30,13 @@ public class UserDaoHibernateImpl implements UserDAO {
         return users;
     }
 
-    public void updateUser(String id, String login, String password) throws DBException {
+    @Override
+    public void updateUser(String id, String login, String password, String role) throws DBException {
         session.beginTransaction();
         final User user = session.get(User.class, Long.valueOf(id));
         user.setLogin(login);
         user.setPassword(password);
+        user.setRole(role);
         session.update(user);
         session.getTransaction().commit();
     }
@@ -51,9 +53,21 @@ public class UserDaoHibernateImpl implements UserDAO {
         return result != null ? result : new User();
     }
 
-    public void insertUser(String name, String login, String password) throws DBException {
+    @Override
+    public boolean isUserExist(String login, String password) throws DBException {
+        boolean result;
+
+        return false;
+    }
+
+    @Override
+    public User getUserByLoginAndPassword(String login, String password) throws DBException {
+        return null;
+    }
+
+    public void insertUser(String name, String login, String password, String role) throws DBException {
         session.beginTransaction();
-        User user = new User(name, login, password);
+        User user = new User(name, login, password, role);
         session.save(user);
         session.getTransaction().commit();
     }

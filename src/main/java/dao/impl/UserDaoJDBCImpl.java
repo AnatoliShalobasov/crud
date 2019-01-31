@@ -39,10 +39,12 @@ public class UserDaoJDBCImpl implements UserDAO {
         return users;
     }
 
-    public void updateUser(String id, String login, String password) throws DBException {
+
+    public void updateUser(String id, String login, String password, String role) throws DBException {
         String updateQuery = "UPDATE users " +
                 "SET user_login = '" + login + "'," +
-                "user_password = '" + password + "' " +
+                "user_password = '" + password + "', " +
+                "user_role = '" + role + "' " +
                 "WHERE id = '" + Integer.valueOf(id) + "'";
         try {
             ExecutorService.execUpdate(updateQuery);
@@ -62,18 +64,42 @@ public class UserDaoJDBCImpl implements UserDAO {
 
     public User getUser(String id) throws DBException {
         String getQuery = "SELECT * FROM users WHERE id = '" + Integer.valueOf(id) + "'";
-        User user;
+        User user = null;
         try {
             user = ExecutorService.get(getQuery, resultHandler).get(0);
         } catch (SQLException e) {
-            throw new DBException(e);
+
         }
         return user;
     }
 
-    public void insertUser(String name, String login, String password) throws DBException {
-        String insertQuery = "INSERT INTO users (user_name, user_login, user_password) " +
-                "VALUES ('" + name + "', '" + login + "', '" + password + "')";
+    @Override
+    public boolean isUserExist(String login, String password) throws DBException {
+        String getQuery = "SELECT * FROM users WHERE user_login = '" + login + "' AND user_password = '" + password + "' ";
+        ArrayList<User> users;
+        try {
+            users = (ArrayList<User>) ExecutorService.get(getQuery, resultHandler);
+        } catch (SQLException e) {
+            throw new DBException(e);
+        }
+        return !users.isEmpty();
+    }
+
+    @Override
+    public User getUserByLoginAndPassword(String login, String password) throws DBException {
+        String getQuery = "SELECT * FROM users WHERE user_login = '" + login + "' AND user_password = '" + password + "' ";
+        User result;
+        try {
+            result = ExecutorService.get(getQuery, resultHandler).get(0);
+        } catch (SQLException e) {
+            throw new DBException(e);
+        }
+        return result;
+    }
+
+    public void insertUser(String name, String login, String password, String role) throws DBException {
+        String insertQuery = "INSERT INTO users (user_name, user_login, user_password, user_role) " +
+                "VALUES ('" + name + "', '" + login + "', '" + password + "', '" + role + "')";
         try {
             ExecutorService.execUpdate(insertQuery);
         } catch (SQLException e) {
@@ -87,6 +113,7 @@ public class UserDaoJDBCImpl implements UserDAO {
                 " user_name VARCHAR (50) NOT NULL," +
                 " user_login VARCHAR (50) NOT NULL," +
                 " user_password VARCHAR (50) NOT NULL," +
+                " user_role VARCHAR (10) NOT NULL DEFAULT 'user'," +
                 " PRIMARY KEY (id))";
         try {
             ExecutorService.execUpdate(createQuery);
@@ -103,7 +130,8 @@ public class UserDaoJDBCImpl implements UserDAO {
                 users.add(new User(result.getInt("id"),
                         result.getString("user_name"),
                         result.getString("user_login"),
-                        result.getString("user_password")));
+                        result.getString("user_password"),
+                        result.getString("user_role")));
             }
             return users;
         }

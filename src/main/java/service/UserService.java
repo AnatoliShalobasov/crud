@@ -28,9 +28,9 @@ public class UserService {
         return instance;
     }
 
-    public void updateUser(String id, String login, String password) {
+    public void updateUser(String id, String login, String password, String role) {
         try {
-            usersDAO.updateUser(id, login, password);
+            usersDAO.updateUser(id, login, password, role);
         } catch (DBException e) {
             e.printStackTrace();
         }
@@ -39,7 +39,7 @@ public class UserService {
     public User getUser(String id) {
         User user = null;
         try {
-            return usersDAO.getUser(id);
+            user = usersDAO.getUser(id);
         } catch (DBException e) {
             e.printStackTrace();
         }
@@ -54,9 +54,9 @@ public class UserService {
         }
     }
 
-    public void insertUser(String name, String login, String password) {
+    public void insertUser(String name, String login, String password, String role) {
         try {
-            usersDAO.insertUser(name, login, password);
+            usersDAO.insertUser(name, login, password, role);
         } catch (DBException e) {
             e.printStackTrace();
         }
@@ -70,5 +70,25 @@ public class UserService {
             e.printStackTrace();
         }
         return users;
+    }
+
+    public boolean isUserExist(String login, String password) {
+        boolean result = false;
+        try {
+            result = usersDAO.isUserExist(login, password);
+        } catch (DBException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public User getUserByLoginAndPassword(String login, String password) {
+        User result = null;
+        try {
+            result = usersDAO.getUserByLoginAndPassword(login, password);
+        } catch (DBException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

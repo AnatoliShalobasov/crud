@@ -14,26 +14,38 @@ public class User {
     private String login;
     @Column(name = "user_password")
     private String password;
+    @Column(name = "user_role")
+    private String role = "user";
 
     public User() {
 
     }
 
-    public User(String name, String login, String password) {
+    public User(String name, String login, String password, String role) {
         this.name = name;
         this.login = login;
         this.password = password;
+        this.role = role;
     }
 
-    public User(long id, String name, String login, String password) {
+    public User(long id, String name, String login, String password, String role) {
         this.id = id;
         this.name = name;
         this.login = login;
         this.password = password;
+        this.role = role;
     }
 
     public long getId() {
         return id;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public void setId(long id) {

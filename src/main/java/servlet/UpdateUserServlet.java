@@ -27,9 +27,10 @@ public class UpdateUserServlet extends HttpServlet {
         final String id = request.getParameter("id");
         final String login = request.getParameter("login");
         final String password = request.getParameter("password");
+        final String role = request.getParameter("role");
 
         UserService userService = UserService.getInstance();
-        userService.updateUser(id, login, password);
-        response.sendRedirect(request.getContextPath() + "/");
+        userService.updateUser(id, login, password, role);
+        response.sendRedirect( "/admin/users");
     }
 }
