@@ -60,6 +60,7 @@ public class DBHelper {
         configuration.setProperty("hibernate.connection.password", UtilProperty.getPropertyValue("BASE_PASSWORD"));
         configuration.setProperty("hibernate.show_sql", UtilProperty.getPropertyValue("SHOW_SQL"));
         configuration.setProperty("hibernate.hbm2ddl.auto", UtilProperty.getPropertyValue("hbm2ddl_auto"));
+
         return configuration;
     }
 

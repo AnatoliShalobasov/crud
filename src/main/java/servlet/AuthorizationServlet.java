@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Objects;
 
 @WebServlet("/")
 public class AuthorizationServlet extends HttpServlet {
@@ -30,7 +29,7 @@ public class AuthorizationServlet extends HttpServlet {
         UserService userService = UserService.getInstance();
         boolean result = userService.isUserExist(login, password);
 
-        if (Objects.nonNull(session) && result) {
+        if (result) {
             final String role = userService.getUserByLoginAndPassword(login, password).getRole();
             moveToMenu(req, resp, role);
         } else {
@@ -43,7 +42,7 @@ public class AuthorizationServlet extends HttpServlet {
                             final String role)
             throws IOException, ServletException {
 
-        if (role.equals("users")) {
+        if (role.equals("admin")) {
             res.sendRedirect("/admin/users");
         } else {
             req.getRequestDispatcher("/user/hello").forward(req, res);

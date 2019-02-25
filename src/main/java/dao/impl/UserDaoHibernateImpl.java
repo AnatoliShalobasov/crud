@@ -24,7 +24,7 @@ public class UserDaoHibernateImpl implements UserDAO {
 
     public List<User> getAll() throws DBException {
         session.beginTransaction();
-        Query query = session.createQuery("FROM model.User");
+        Query query = session.createQuery("FROM User");
         ArrayList<User> users = (ArrayList<User>) query.list();
         session.getTransaction().commit();
         return users;
@@ -55,14 +55,22 @@ public class UserDaoHibernateImpl implements UserDAO {
 
     @Override
     public boolean isUserExist(String login, String password) throws DBException {
-        boolean result;
+        Query query = session.createQuery("From User u WHERE u.login =:user_login AND u.password =:user_password ");
+        query.setParameter("user_login", login);
+        query.setParameter("user_password", password);
 
-        return false;
+        List list = query.list();
+        return list.size() > 0;
     }
 
     @Override
     public User getUserByLoginAndPassword(String login, String password) throws DBException {
-        return null;
+        Query query = session.createQuery("From User u WHERE u.login =:user_login AND u.password =:user_password ");
+        query.setParameter("user_login", login);
+        query.setParameter("user_password", password);
+        ArrayList<User> list = (ArrayList<User>) query.list();
+
+        return list.get(0);
     }
 
     public void insertUser(String name, String login, String password, String role) throws DBException {

@@ -13,7 +13,7 @@ import java.util.List;
 
 @WebServlet("/admin/users")
 public class AdminServlet extends HttpServlet {
-    List<User> listUsers;
+   private List<User> listUsers;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -21,5 +21,10 @@ public class AdminServlet extends HttpServlet {
         listUsers = userService.getAllUsers();
         req.setAttribute("users", listUsers);
         req.getRequestDispatcher("/WEB-INF/admin_menu.jsp").forward(req, resp);
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
     }
 }
