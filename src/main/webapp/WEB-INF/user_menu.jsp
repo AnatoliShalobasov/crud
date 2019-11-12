@@ -6,6 +6,6 @@
 </head>
 <body>
 <h1>Hello <c:out value="${user.getName()}"/>!</h1>
-<a href="<c:url value="/logout"/>">Logout</a>
+<a href="<c:url value="/logout"/>" > Logout </a>
 </body>
 </html>

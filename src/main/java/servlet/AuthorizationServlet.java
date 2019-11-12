@@ -1,6 +1,6 @@
 package servlet;
 
-import service.UserService;
+import service.UserServiceImpl;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,6 +12,8 @@ import java.io.IOException;
 
 @WebServlet("/")
 public class AuthorizationServlet extends HttpServlet {
+    private UserServiceImpl service = UserServiceImpl.getInstance();
+
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher("/WEB-INF/login.jsp").forward(req, resp);
@@ -26,11 +28,10 @@ public class AuthorizationServlet extends HttpServlet {
         session.setAttribute("login", login);
         session.setAttribute("password", password);
 
-        UserService userService = UserService.getInstance();
-        boolean result = userService.isUserExist(login, password);
+        boolean result = service.isUserExist(login, password);
 
         if (result) {
-            final String role = userService.getUserByLoginAndPassword(login, password).getRole();
+            final String role = service.getUserByLoginAndPassword(login, password).getRole();
             moveToMenu(req, resp, role);
         } else {
             req.getRequestDispatcher("/WEB-INF/login.jsp").forward(req, resp);

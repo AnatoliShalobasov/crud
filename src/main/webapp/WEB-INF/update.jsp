@@ -10,7 +10,7 @@
 <div>Пароль: <c:out value="${requestScope.user.getPassword()}"/></div>
 <div>Роль: <c:out value="${requestScope.user.getRole()}"/></div>
 <br/>
-<form method="post" action="<c:url value='/update'/>">
+<form method="post" action="<c:url value='/admin/update'/>">
     <label>Новый логин: <input type="text" name="login" value="${requestScope.user.getLogin()}"/></label><br>
     <label>Новый пароль: <input type="text" name="password" value="${requestScope.user.getPassword()}"/></label><br>
     <label>Новая роль:
@@ -21,5 +21,7 @@
     <input type="number" hidden name="id" value="${requestScope.user.getId()}"/>
     <input type="submit" value="Ok" name="Ok"><br>
 </form>
+<br><br>
+<a href="<c:url value="/logout"/>" > Logout </a>
 </body>
 </html>

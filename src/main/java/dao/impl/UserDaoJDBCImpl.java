@@ -2,10 +2,10 @@ package dao.impl;
 
 import dao.DBException;
 import dao.UserDAO;
-import utils.DBHelper;
 import executor.ExecutorService;
 import executor.ResultHandler;
 import model.User;
+import utils.DBHelper;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -15,110 +15,190 @@ import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDAO {
     private Connection connection;
-    private ExecutorService ExecutorService;
+    private ExecutorService executorService;
     private ResultHandler<User> resultHandler;
 
     public UserDaoJDBCImpl() {
-        try {
-            this.connection = DBHelper.getInstance().getConnection();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        this.ExecutorService = new ExecutorService(connection);
         this.resultHandler = new Result();
     }
 
     public List<User> getAll() throws DBException {
-        String selectAllQuery = "SELECT * FROM users";
         ArrayList<User> users;
         try {
-            users = (ArrayList<User>) ExecutorService.get(selectAllQuery, resultHandler);
+            connection = DBHelper.getInstance().getConnection();
+            executorService = new ExecutorService(connection);
+            String selectAllQuery = "SELECT * FROM users";
+            users = (ArrayList<User>) executorService.get(selectAllQuery, resultHandler);
         } catch (SQLException e) {
             throw new DBException(e);
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
+
         return users;
     }
 
 
     public void updateUser(String id, String login, String password, String role) throws DBException {
-        String updateQuery = "UPDATE users " +
-                "SET user_login = '" + login + "'," +
-                "user_password = '" + password + "', " +
-                "user_role = '" + role + "' " +
-                "WHERE id = '" + Integer.valueOf(id) + "'";
         try {
-            ExecutorService.execUpdate(updateQuery);
+            connection = DBHelper.getInstance().getConnection();
+            executorService = new ExecutorService(connection);
+            String updateQuery = "UPDATE users " +
+                    "SET user_login = '" + login + "'," +
+                    "user_password = '" + password + "', " +
+                    "user_role = '" + role + "' " +
+                    "WHERE id = '" + Integer.valueOf(id) + "'";
+
+            executorService.execUpdate(updateQuery);
         } catch (SQLException e) {
             throw new DBException(e);
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void deleteUser(String id) throws DBException {
-        String deleteQuery = "DELETE FROM users WHERE id = '" + Integer.valueOf(id) + "'";
         try {
-            ExecutorService.execUpdate(deleteQuery);
+            connection = DBHelper.getInstance().getConnection();
+            executorService = new ExecutorService(connection);
+            String deleteQuery = "DELETE FROM users WHERE id = '" + Integer.valueOf(id) + "'";
+            executorService.execUpdate(deleteQuery);
         } catch (SQLException e) {
             throw new DBException(e);
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public User getUser(String id) throws DBException {
-        String getQuery = "SELECT * FROM users WHERE id = '" + Integer.valueOf(id) + "'";
-        User user = null;
+        User user;
         try {
-            user = ExecutorService.get(getQuery, resultHandler).get(0);
+            connection = DBHelper.getInstance().getConnection();
+            executorService = new ExecutorService(connection);
+            String getQuery = "SELECT * FROM users WHERE id = '" + Integer.valueOf(id) + "'";
+            user = executorService.get(getQuery, resultHandler).get(0);
         } catch (SQLException e) {
-
+            throw new DBException(e);
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return user;
     }
 
     @Override
     public boolean isUserExist(String login, String password) throws DBException {
-        String getQuery = "SELECT * FROM users WHERE user_login = '" + login + "' AND user_password = '" + password + "' ";
         ArrayList<User> users;
         try {
-            users = (ArrayList<User>) ExecutorService.get(getQuery, resultHandler);
+            connection = DBHelper.getInstance().getConnection();
+            executorService = new ExecutorService(connection);
+            String getQuery = "SELECT * FROM users WHERE user_login = '" + login + "' AND user_password = '" + password + "' ";
+            users = (ArrayList<User>) executorService.get(getQuery, resultHandler);
         } catch (SQLException e) {
             throw new DBException(e);
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return !users.isEmpty();
     }
 
     @Override
     public User getUserByLoginAndPassword(String login, String password) throws DBException {
-        String getQuery = "SELECT * FROM users WHERE user_login = '" + login + "' AND user_password = '" + password + "' ";
-        User result;
+        List<User> users;
+        User result = null;
         try {
-            result = ExecutorService.get(getQuery, resultHandler).get(0);
+            connection = DBHelper.getInstance().getConnection();
+            executorService = new ExecutorService(connection);
+            String getQuery = "SELECT * FROM users WHERE user_login = '" + login + "' AND user_password = '" + password + "' ";
+            users = executorService.get(getQuery, resultHandler);
+            if (users.size() > 0){
+                result = users.get(0);
+            }
         } catch (SQLException e) {
             throw new DBException(e);
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
         return result;
     }
 
     public void insertUser(String name, String login, String password, String role) throws DBException {
-        String insertQuery = "INSERT INTO users (user_name, user_login, user_password, user_role) " +
-                "VALUES ('" + name + "', '" + login + "', '" + password + "', '" + role + "')";
         try {
-            ExecutorService.execUpdate(insertQuery);
+            connection = DBHelper.getInstance().getConnection();
+            executorService = new ExecutorService(connection);
+            String insertQuery = "INSERT INTO users (user_name, user_login, user_password, user_role) " +
+                    "VALUES ('" + name + "', '" + login + "', '" + password + "', '" + role + "')";
+            executorService.execUpdate(insertQuery);
         } catch (SQLException e) {
             throw new DBException(e);
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
     public void createTable() throws DBException {
-        String createQuery = "CREATE TABLE if NOT EXISTS" +
-                " users (id bigint auto_increment ," +
-                " user_name VARCHAR (50) NOT NULL," +
-                " user_login VARCHAR (50) NOT NULL," +
-                " user_password VARCHAR (50) NOT NULL," +
-                " user_role VARCHAR (10) NOT NULL DEFAULT 'user'," +
-                " PRIMARY KEY (id))";
         try {
-            ExecutorService.execUpdate(createQuery);
+            connection = DBHelper.getInstance().getConnection();
+            executorService = new ExecutorService(connection);
+            String createQuery = "CREATE TABLE if NOT EXISTS" +
+                    " users (id bigint auto_increment ," +
+                    " user_name VARCHAR (50) NOT NULL," +
+                    " user_login VARCHAR (50) NOT NULL," +
+                    " user_password VARCHAR (50) NOT NULL," +
+                    " user_role VARCHAR (10) NOT NULL DEFAULT 'user'," +
+                    " PRIMARY KEY (id))";
+            executorService.execUpdate(createQuery);
         } catch (SQLException e) {
             throw new DBException(e);
+        } finally {
+            try {
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 

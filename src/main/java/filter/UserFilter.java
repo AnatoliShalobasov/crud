@@ -8,28 +8,24 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-@WebFilter("/admin/*")
-public class AdminFilter implements Filter {
+@WebFilter("/user/*")
+public class UserFilter implements Filter {
     @Override
-    public void init(FilterConfig filterConfig) {
+    public void init(FilterConfig filterConfig) throws ServletException {
 
     }
 
     @Override
-    public void doFilter(ServletRequest servletRequest,
-                         ServletResponse servletResponse,
-                         FilterChain filterChain)
-            throws IOException, ServletException {
-
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         final User user = ServletUtil.getPersonFromSession(servletRequest);
         if (user == null) {
             servletRequest.getRequestDispatcher("/WEB-INF/error_session.jsp").forward(servletRequest, servletResponse);
         }
         if (user.getRole().equals("user")) {
-            servletRequest.getRequestDispatcher("/WEB-INF/error.jsp").forward(servletRequest, servletResponse);
-        } else {
             HttpServletRequest request = (HttpServletRequest) servletRequest;
             servletRequest.getRequestDispatcher(request.getRequestURI()).forward(servletRequest, servletResponse);
+        } else {
+            servletRequest.getRequestDispatcher("/WEB-INF/error.jsp").forward(servletRequest, servletResponse);
         }
     }
 

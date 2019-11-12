@@ -23,20 +23,20 @@
             <td><c:out value="${user.getPassword()}"/></td>
             <td><c:out value="${user.getRole()}"/></td>
             <td>
-                <form method="post" action="<c:url value='/delete'/>">
+                <form method="post" action="<c:url value='/admin/delete'/>">
                     <input type="number" hidden name="id" value="${user.getId()}"/>
                     <input type="submit" name="delete" value="Удалить"/>
                 </form>
             </td>
             <td>
-                <form method="get" action="<c:url value='/update'/>">
+                <form method="get" action="<c:url value='/admin/update'/>">
                     <input type="number" hidden name="id" value="${user.getId()}"/>
                     <input type="submit" value="Редактировать"/>
                 </form>
             </td>
         </tr>
     </c:forEach>
-    <form method="post" action="<c:url value='/add'/>">
+    <form method="post" action="<c:url value='/admin/add'/>">
         <tr>
             <td>Создание нового пользователь</td>
             <td><label><input type="text" name="name"></label>Имя</td>
@@ -53,6 +53,7 @@
         </tr>
     </form>
 </table>
-<a href="<c:url value="/logout"/>">Logout</a>
+<br><br>
+<a href="<c:url value="/logout"/>" > Logout </a>
 </body>
 </html>

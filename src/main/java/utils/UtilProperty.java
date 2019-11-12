@@ -6,8 +6,9 @@ import java.util.Properties;
 
 public class UtilProperty {
     private static Properties prop;
-    static{
-         prop = new Properties();
+
+    static {
+        prop = new Properties();
         try (InputStream inputStream = UtilProperty.class.getClassLoader().getResourceAsStream("application.properties")) {
             prop.load(inputStream);
         } catch (IOException e) {
@@ -16,7 +17,6 @@ public class UtilProperty {
     }
 
     public static String getPropertyValue(String propertyName) {
-        String propertyValue = prop.getProperty(propertyName);
-        return propertyValue;
+        return prop.getProperty(propertyName);
     }
 }

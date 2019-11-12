@@ -17,8 +17,6 @@ public class DBHelper {
     private DBHelper() {
     }
 
-    private Configuration configuration;
-
     public static DBHelper getInstance() {
         if (instance == null) {
             return instance = new DBHelper();
@@ -46,11 +44,10 @@ public class DBHelper {
     }
 
     public Configuration getConfiguration() {
-        configuration = DBHelper.getMySqlConfiguration();
-        return configuration;
+        return DBHelper.getMySqlConfiguration();
     }
 
-    private static Configuration getMySqlConfiguration() {
+    public static Configuration getMySqlConfiguration() {
         Configuration configuration = new Configuration();
         configuration.addAnnotatedClass(User.class);
         configuration.setProperty("hibernate.dialect", UtilProperty.getPropertyValue("DIALECT"));
@@ -64,7 +61,7 @@ public class DBHelper {
         return configuration;
     }
 
-    private static SessionFactory createSessionFactory(Configuration configuration) {
+    public static SessionFactory createSessionFactory(Configuration configuration) {
         StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder();
         builder.applySettings(configuration.getProperties());
         ServiceRegistry serviceRegistry = builder.build();

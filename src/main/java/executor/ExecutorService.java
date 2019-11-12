@@ -13,16 +13,40 @@ public class ExecutorService {
     }
 
     public void execUpdate(String update) throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.execute(update);
-        stmt.close();
+        Statement stmt = null;
+        try {
+            stmt = connection.createStatement();
+            stmt.execute(update);
+        } catch (Exception e) {
+            throw new SQLException(e);
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (Exception e) {
+                /*NOP*/
+            }
+
+        }
     }
 
     public <T> List<T> get(String query, ResultHandler<T> resultHandler) throws SQLException {
-        Statement stmt = connection.createStatement();
-        stmt.execute(query);
-        List<T> result = resultHandler.handle(stmt.getResultSet());
-        stmt.close();
+        Statement stmt = null;
+        List<T> result;
+        try {
+            stmt = connection.createStatement();
+            stmt.execute(query);
+            result = resultHandler.handle(stmt.getResultSet());
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (Exception e) {
+                /*NOP*/
+            }
+        }
         return result;
     }
 }
